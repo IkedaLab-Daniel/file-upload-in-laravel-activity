@@ -19,8 +19,3 @@ Route::get('/files/{filename}', [FileUploadController::class, 'show'])->name('fi
 
 //  > delete file
 Route::delete('/files/{filename}', [FileUploadController::class, 'delete'])->name('files.delete');
-
-// > test tailwind
-Route::get('/test', function () {
-    return view('file.play');
-});

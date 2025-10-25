@@ -8,14 +8,20 @@
 </head>
 <body class="bg-gray-50 min-h-screen">
     <div class="max-w-4xl mx-auto px-4 py-12">
-        
-        <nav class="flex gap-4 mb-8 p-4 bg-white rounded-lg shadow-sm">
-            <a href="{{ route('upload.page') }}" class="font-medium text-gray-600 hover:text-gray-900">
-                Upload File
-            </a>
-            <a href="{{ route('files.list') }}" class="font-medium text-gray-600 hover:text-gray-900">
-                View Files
-            </a>
+
+        <nav class="flex gap-4 mb-8 py-2 px-4 justify-between items-center bg-white rounded-lg shadow-sm">
+            <div class="flex gap-6">
+                <a href="{{ route('upload.page') }}" class="font-medium text-gray-600 hover:text-gray-900">
+                    Upload File
+                </a>
+                <a href="{{ route('files.list') }}" class="font-medium text-gray-600 hover:text-gray-900">
+                    View Files
+                </a>
+            </div>
+            <div>
+                <img src="https://mcc.edu.ph/mcc_website_revamp_2021/img/logo.png" alt="mcc" class="w-8">
+            </div>
+            
         </nav>
 
         <h1 class="text-2xl font-semibold text-gray-900 mb-6">File Preview</h1>

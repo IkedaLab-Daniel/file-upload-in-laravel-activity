@@ -12,21 +12,22 @@ class FileUploadController extends Controller
     public function upload(Request $request)
     {
         $request->validate([
-            'file' => 'required|mimes:jpg,png,pdf|max:2048',
+            // > just to be sure it accepts any file type possible
+            'file' => 'required|file|mimes:jpg,jpeg,png,gif,webp,svg,pdf,txt,rtf,csv,xml,json,doc,docx,xls,xlsx,ppt,pptx,odt,ods,odp,zip,rar,7z,tar,gz,mp3,wav,ogg,mp4,mov,avi,mkv,wmv,psd,ai,eps|max:2048',
         ]);
 
         $file = $request->file('file');
-        // Get original filename without extension
+        // > get original filename without extension
         $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-        // Get file extension
+        // > get file extension
         $extension = $file->getClientOriginalExtension();
-        // Create filename with timestamp
+        // > create filename with timestamp
         $filename = $originalName . '-' . date('YmdHis') . '.' . $extension;
         
-        // Store file
+        // > store file
         $path = $file->storeAs('uploads', $filename, 'public');
 
-        // Save to database
+        // > save to database
         File::create([
             'filename' => $filename,
             'original_name' => $file->getClientOriginalName(),
