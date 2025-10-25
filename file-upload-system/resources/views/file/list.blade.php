@@ -4,145 +4,73 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>File List</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 50px auto;
-            padding: 20px;
-        }
-        .nav {
-            margin-bottom: 30px;
-            padding: 10px;
-            background: #f0f0f0;
-            border-radius: 5px;
-        }
-        .nav a {
-            margin-right: 15px;
-            text-decoration: none;
-            color: #333;
-            font-weight: bold;
-        }
-        .nav a:hover {
-            color: #007bff;
-        }
-        .alert {
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 5px;
-        }
-        .alert-success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        .alert-error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        .file-list {
-            list-style: none;
-            padding: 0;
-        }
-        .file-item {
-            border: 1px solid #ddd;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .file-info {
-            flex: 1;
-        }
-        .file-name {
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        .file-size {
-            color: #666;
-            font-size: 14px;
-        }
-        .file-actions {
-            display: flex;
-            gap: 10px;
-        }
-        .btn {
-            padding: 8px 15px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-        }
-        .btn-view {
-            background: #007bff;
-            color: white;
-        }
-        .btn-view:hover {
-            background: #0056b3;
-        }
-        .btn-delete {
-            background: #dc3545;
-            color: white;
-        }
-        .btn-delete:hover {
-            background: #c82333;
-        }
-        .empty-state {
-            text-align: center;
-            padding: 50px;
-            color: #666;
-        }
-    </style>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body>
-    <div class="nav">
-        <a href="{{ route('upload.page') }}">📤 Upload</a>
-        <a href="{{ route('files.list') }}">📁 View Files</a>
+<body class="bg-gray-50 min-h-screen">
+    <div class="max-w-3xl mx-auto px-4 py-12">
+        <!-- Navigation -->
+        <nav class="flex gap-4 mb-8 p-4 bg-white rounded-lg shadow-sm">
+            <a href="{{ route('upload.page') }}" class="font-medium text-gray-600 hover:text-gray-900">
+                📤 Upload
+            </a>
+            <a href="{{ route('files.list') }}" class="font-medium text-blue-600 hover:text-blue-700">
+                📁 View Files
+            </a>
+        </nav>
+
+        <h1 class="text-2xl font-semibold text-gray-900 mb-6">Uploaded Files</h1>
+
+        <!-- Success/Error Messages -->
+        @if(session('success'))
+            <div class="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg mb-6">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg mb-6">
+                {{ session('error') }}
+            </div>
+        @endif
+
+        <!-- File List -->
+        @if(count($files) > 0)
+            <ul class="space-y-3">
+                @foreach($files as $file)
+                    <li class="bg-white border border-gray-200 rounded-lg p-4 flex items-center justify-between hover:shadow-sm transition">
+                        <div class="flex-1 min-w-0">
+                            <div class="font-medium text-gray-900 truncate">{{ $file['name'] }}</div>
+                            <div class="text-sm text-gray-500">{{ number_format($file['size'] / 1024, 2) }} KB</div>
+                        </div>
+                        <div class="flex gap-2 ml-4">
+                            <a href="{{ route('files.show', $file['name']) }}" 
+                               class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 transition" 
+                               target="_blank">
+                                View
+                            </a>
+                            <form action="{{ route('files.delete', $file['name']) }}" method="POST" 
+                                  onsubmit="return confirm('Are you sure you want to delete this file?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" 
+                                        class="px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-md hover:bg-red-700 transition">
+                                    Delete
+                                </button>
+                            </form>
+                        </div>
+                    </li>
+                @endforeach
+            </ul>
+        @else
+            <div class="bg-white rounded-lg shadow-sm p-12 text-center">
+                <h3 class="text-lg font-medium text-gray-900 mb-2">No files uploaded yet</h3>
+                <p class="text-gray-600 mb-6">Upload your first file to get started!</p>
+                <a href="{{ route('upload.page') }}" 
+                   class="inline-block px-6 py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 transition">
+                    Go to Upload
+                </a>
+            </div>
+        @endif
     </div>
-
-    <h1>Uploaded Files</h1>
-
-    @if(session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-    @endif
-
-    @if(session('error'))
-        <div class="alert alert-error">
-            {{ session('error') }}
-        </div>
-    @endif
-
-    @if(count($files) > 0)
-        <ul class="file-list">
-            @foreach($files as $file)
-                <li class="file-item">
-                    <div class="file-info">
-                        <div class="file-name">{{ $file['name'] }}</div>
-                        <div class="file-size">{{ number_format($file['size'] / 1024, 2) }} KB</div>
-                    </div>
-                    <div class="file-actions">
-                        <a href="{{ route('files.show', $file['name']) }}" class="btn btn-view" target="_blank">View</a>
-                        <form action="{{ route('files.delete', $file['name']) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this file?');" style="margin: 0;">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-delete">Delete</button>
-                        </form>
-                    </div>
-                </li>
-            @endforeach
-        </ul>
-    @else
-        <div class="empty-state">
-            <h3>No files uploaded yet</h3>
-            <p>Upload your first file to get started!</p>
-            <a href="{{ route('upload.page') }}" class="btn btn-view">Go to Upload</a>
-        </div>
-    @endif
 </body>
 </html>

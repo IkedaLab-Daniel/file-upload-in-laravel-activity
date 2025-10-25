@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Callejas - File Upload</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body>
-    <div>
-        <h1 class="text-slate-200">Sample</h1>
+    <div class="bg-red-200">
+        <h1 class="text-slate-200">Sample aa</h1>
     </div>
 </body>
 </html>
