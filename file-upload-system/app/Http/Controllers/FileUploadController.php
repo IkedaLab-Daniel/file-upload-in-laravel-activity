@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\File;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Storage;
 
 class FileUploadController extends Controller
@@ -20,10 +20,20 @@ class FileUploadController extends Controller
         $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
         // Get file extension
         $extension = $file->getClientOriginalExtension();
-        // Create filename with timestamp: originalname-20231025143022.pdf
+        // Create filename with timestamp
         $filename = $originalName . '-' . date('YmdHis') . '.' . $extension;
         
+        // Store file
         $path = $file->storeAs('uploads', $filename, 'public');
+
+        // Save to database
+        File::create([
+            'filename' => $filename,
+            'original_name' => $file->getClientOriginalName(),
+            'file_path' => $path,
+            'mime_type' => $file->getMimeType(),
+            'file_size' => $file->getSize(),
+        ]);
 
         return redirect()->route('files.list')->with('success', 'File uploaded successfully!');
     }
@@ -31,15 +41,20 @@ class FileUploadController extends Controller
     // > List all uploaded files
     public function list()
     {
-        $files = Storage::disk('public')->files('uploads');
+        // Get files from database instead of storage
+        $files = File::orderBy('created_at', 'desc')->get();
         
-        // Get file details
+        // Format file details
         $fileDetails = [];
         foreach ($files as $file) {
             $fileDetails[] = [
-                'name' => basename($file),
-                'size' => Storage::disk('public')->size($file),
-                'url' => Storage::url($file)
+                'id' => $file->id,
+                'name' => $file->filename,
+                'original_name' => $file->original_name,
+                'size' => $file->file_size,
+                'mime_type' => $file->mime_type,
+                'uploaded_at' => $file->created_at->diffForHumans(),
+                'url' => Storage::url($file->file_path)
             ];
         }
 
@@ -61,6 +76,8 @@ class FileUploadController extends Controller
         
         if (Storage::disk('public')->exists($filePath)) {
             Storage::disk('public')->delete($filePath);
+            // Delete from database
+            File::where('filename', $filename)->delete();
             return redirect()->route('files.list')->with('success', 'File deleted successfully!');
         }
 

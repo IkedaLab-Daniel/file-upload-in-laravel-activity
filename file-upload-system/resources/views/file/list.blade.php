@@ -8,13 +8,13 @@
 </head>
 <body class="bg-gray-50 min-h-screen">
     <div class="max-w-3xl mx-auto px-4 py-12">
-        <!-- Navigation -->
+
         <nav class="flex gap-4 mb-8 p-4 bg-white rounded-lg shadow-sm">
             <a href="{{ route('upload.page') }}" class="font-medium text-gray-600 hover:text-gray-900">
-                📤 Upload
+                Upload File
             </a>
-            <a href="{{ route('files.list') }}" class="font-medium text-blue-600 hover:text-blue-700">
-                📁 View Files
+            <a href="{{ route('files.list') }}" class="font-medium text-gray-600 hover:text-gray-900">
+                View Files
             </a>
         </nav>
 
@@ -37,26 +37,31 @@
         @if(count($files) > 0)
             <ul class="space-y-3">
                 @foreach($files as $file)
-                    <li class="bg-white border border-gray-200 rounded-lg p-4 flex items-center justify-between hover:shadow-sm transition">
-                        <div class="flex-1 min-w-0">
-                            <div class="font-medium text-gray-900 truncate">{{ $file['name'] }}</div>
-                            <div class="text-sm text-gray-500">{{ number_format($file['size'] / 1024, 2) }} KB</div>
-                        </div>
-                        <div class="flex gap-2 ml-4">
-                            <a href="{{ route('files.show', $file['name']) }}" 
-                               class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 transition" 
-                               target="_blank">
-                                View
-                            </a>
-                            <form action="{{ route('files.delete', $file['name']) }}" method="POST" 
-                                  onsubmit="return confirm('Are you sure you want to delete this file?');">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" 
-                                        class="px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-md hover:bg-red-700 transition">
-                                    Delete
-                                </button>
-                            </form>
+                    <li class="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-sm transition">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1 min-w-0">
+                                <div class="font-medium text-gray-900 truncate">{{ $file['original_name'] }}</div>
+                                <div class="text-sm text-gray-500 mt-1">
+                                    {{ number_format($file['size'] / 1024, 2) }} KB • 
+                                    Uploaded {{ $file['uploaded_at'] }}
+                                </div>
+                            </div>
+                            <div class="flex gap-2 ml-4">
+                                <a href="{{ route('files.show', $file['name']) }}" 
+                                   class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 transition" 
+                                   target="_blank">
+                                    View
+                                </a>
+                                <form action="{{ route('files.delete', $file['name']) }}" method="POST" 
+                                      onsubmit="return confirm('Are you sure you want to delete this file?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" 
+                                            class="px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-md hover:bg-red-700 transition">
+                                        Delete
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </li>
                 @endforeach

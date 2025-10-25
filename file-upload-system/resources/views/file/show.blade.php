@@ -8,13 +8,13 @@
 </head>
 <body class="bg-gray-50 min-h-screen">
     <div class="max-w-4xl mx-auto px-4 py-12">
-        <!-- Navigation -->
+        
         <nav class="flex gap-4 mb-8 p-4 bg-white rounded-lg shadow-sm">
             <a href="{{ route('upload.page') }}" class="font-medium text-gray-600 hover:text-gray-900">
-                📤 Upload
+                Upload File
             </a>
             <a href="{{ route('files.list') }}" class="font-medium text-gray-600 hover:text-gray-900">
-                📁 View Files
+                View Files
             </a>
         </nav>
 
