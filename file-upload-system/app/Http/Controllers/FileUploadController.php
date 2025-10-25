@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Storage;
 
 class FileUploadController extends Controller
@@ -15,7 +16,14 @@ class FileUploadController extends Controller
         ]);
 
         $file = $request->file('file');
-        $path = $file->store('uploads', 'public');
+        // Get original filename without extension
+        $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+        // Get file extension
+        $extension = $file->getClientOriginalExtension();
+        // Create filename with timestamp: originalname-20231025143022.pdf
+        $filename = $originalName . '-' . date('YmdHis') . '.' . $extension;
+        
+        $path = $file->storeAs('uploads', $filename, 'public');
 
         // TODO Additional logic (e.g., storing file information in the database)
 
