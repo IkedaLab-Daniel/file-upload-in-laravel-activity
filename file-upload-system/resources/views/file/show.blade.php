@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload File</title>
+    <title>View File</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -26,26 +26,20 @@
         .nav a:hover {
             color: #007bff;
         }
-        .upload-form {
-            border: 2px dashed #ccc;
-            padding: 30px;
-            border-radius: 10px;
+        .file-preview {
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 5px;
             text-align: center;
         }
-        button {
-            background: #007bff;
-            color: white;
-            padding: 10px 20px;
+        .file-preview img {
+            max-width: 100%;
+            height: auto;
+        }
+        .file-preview iframe {
+            width: 100%;
+            height: 600px;
             border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-        button:hover {
-            background: #0056b3;
-        }
-        input[type="file"] {
-            margin: 10px 0;
         }
     </style>
 </head>
@@ -55,14 +49,14 @@
         <a href="{{ route('files.list') }}">📁 View Files</a>
     </div>
 
-    <h1>Upload File</h1>
+    <h1>File Preview</h1>
     
-    <form action="{{ route('upload') }}" method="POST" enctype="multipart/form-data" class="upload-form">
-        @csrf
-        <p>Select a file to upload (jpg, png, pdf - max 2MB)</p>
-        <input type="file" name="file" required>
-        <br>
-        <button type="submit">Upload File</button>
-    </form>
+    <div class="file-preview">
+        @if(str_ends_with($url, '.pdf'))
+            <iframe src="{{ $url }}"></iframe>
+        @else
+            <img src="{{ $url }}" alt="File preview">
+        @endif
+    </div>
 </body>
 </html>

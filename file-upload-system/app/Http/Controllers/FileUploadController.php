@@ -25,16 +25,45 @@ class FileUploadController extends Controller
         
         $path = $file->storeAs('uploads', $filename, 'public');
 
-        // TODO Additional logic (e.g., storing file information in the database)
-
-        return "File uploaded successfully!";
+        return redirect()->route('files.list')->with('success', 'File uploaded successfully!');
     }
 
-    // > Diesplay
+    // > List all uploaded files
+    public function list()
+    {
+        $files = Storage::disk('public')->files('uploads');
+        
+        // Get file details
+        $fileDetails = [];
+        foreach ($files as $file) {
+            $fileDetails[] = [
+                'name' => basename($file),
+                'size' => Storage::disk('public')->size($file),
+                'url' => Storage::url($file)
+            ];
+        }
+
+        return view('file.list', ['files' => $fileDetails]);
+    }
+
+    // > Display single file
     public function show($filename)
     {
         $url = Storage::url("uploads/{$filename}");
 
         return view('file.show', ['url' => $url]);
+    }
+
+    // > Delete file
+    public function delete($filename)
+    {
+        $filePath = 'uploads/' . $filename;
+        
+        if (Storage::disk('public')->exists($filePath)) {
+            Storage::disk('public')->delete($filePath);
+            return redirect()->route('files.list')->with('success', 'File deleted successfully!');
+        }
+
+        return redirect()->route('files.list')->with('error', 'File not found!');
     }
 }
